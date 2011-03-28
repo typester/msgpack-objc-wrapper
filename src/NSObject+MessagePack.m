@@ -69,7 +69,7 @@
         }
         else {
             // XXX
-            msgpack_pack_int64(pk, [(NSNumber*)self longLongValue];
+            msgpack_pack_int64(pk, [(NSNumber*)self longLongValue]);
         }
     }
     else if ([self isKindOfClass:[NSNull class]]) {
