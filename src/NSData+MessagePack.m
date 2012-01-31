@@ -24,13 +24,6 @@
     return res;
 }
 
--(NSString*)MPStringValue {
-    NSString* s = [[NSString alloc] initWithBytes:[self bytes]
-                                           length:[self length]
-                                         encoding:NSUTF8StringEncoding];
-    return [s autorelease];
-}
-
 -(id)MPDecodeMsgpackObject:(msgpack_object*)obj {
     id res = nil;
 
@@ -51,7 +44,19 @@
             res = [NSNumber numberWithDouble:obj->via.dec];
             break;
         case MSGPACK_OBJECT_RAW:
-            res = [NSData dataWithBytes:obj->via.raw.ptr length:obj->via.raw.size];
+            uint8_t* flag = (uint8_t*)obj->via.raw.ptr;
+            if (0xff == *flag) {
+                // data
+                res = [NSData dataWithBytes:obj->via.raw.ptr + 1
+                                     length:obj->via.raw.size - 1];
+            }
+            else {
+                // utf-8
+                res = [[[NSString alloc] initWithBytes:obj->via.raw.ptr
+                                                length:obj->via.raw.size
+                                              encoding:NSUTF8StringEncoding] autorelease];
+            }
+
             break;
         case MSGPACK_OBJECT_ARRAY: {
             NSMutableArray* array = [NSMutableArray arrayWithCapacity:obj->via.array.size];

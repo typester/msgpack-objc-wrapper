@@ -3,6 +3,5 @@
 @interface NSData (NSData_MessagePack)
 
 -(id)MPValue;
--(NSString*)MPStringValue;
 
 @end
