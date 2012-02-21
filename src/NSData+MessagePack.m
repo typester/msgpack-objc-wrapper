@@ -26,6 +26,7 @@
 
 -(id)MPDecodeMsgpackObject:(msgpack_object*)obj {
     id res = nil;
+    uint8_t* flag;
 
     switch (obj->type) {
         case MSGPACK_OBJECT_NIL:
@@ -44,7 +45,7 @@
             res = [NSNumber numberWithDouble:obj->via.dec];
             break;
         case MSGPACK_OBJECT_RAW:
-            uint8_t* flag = (uint8_t*)obj->via.raw.ptr;
+            flag = (uint8_t*)obj->via.raw.ptr;
             if (0xff == *flag) {
                 // data
                 res = [NSData dataWithBytes:obj->via.raw.ptr + 1
@@ -75,11 +76,11 @@
             msgpack_object_kv* kv = obj->via.map.ptr;
 
             for (int i = 0; i < obj->via.map.size; ++i) {
-                NSData* key = [self MPDecodeMsgpackObject:&((kv + i)->key)];
-                NSAssert([key isKindOfClass:[NSData class]], nil);
+                NSString* key = [self MPDecodeMsgpackObject:&((kv + i)->key)];
+                NSAssert([key isKindOfClass:[NSString class]], nil);
 
                 id value = [self MPDecodeMsgpackObject:&((kv + i)->val)];
-                [map setObject:value forKey:[key MPStringValue]];
+                [map setObject:value forKey:key];
             }
 
             res = [NSDictionary dictionaryWithDictionary:map];

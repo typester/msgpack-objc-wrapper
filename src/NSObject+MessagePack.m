@@ -57,7 +57,7 @@
         NSUInteger len = [(NSData*)self length];
         uint8_t flag = 0xff;
         msgpack_pack_raw(pk, len + 1);
-        msgpack_pack_raw(pk, &flag, 1);
+        msgpack_pack_raw_body(pk, &flag, 1);
         msgpack_pack_raw_body(pk, [(NSData*)self bytes], len);
     }
     else if ([self isKindOfClass:[NSNumber class]]) {
