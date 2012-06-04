@@ -1,7 +1,9 @@
 #import "MessagePackStreaming.h"
 
 #include <msgpack.h>
+
 #include <string.h>
+#include <assert.h>
 
 @implementation MessagePackStreaming {
     msgpack_unpacker* _unpacker;
@@ -87,8 +89,7 @@ static id decode_msgpack_object(msgpack_object* obj) {
 
             for (int i = 0; i < obj->via.map.size; ++i) {
                 NSString* key = decode_msgpack_object(&((kv + i)->key));
-                NSAssert([key isKindOfClass:[NSString class]], nil);
-
+                assert([key isKindOfClass:[NSString class]]);
                 id value = decode_msgpack_object(&((kv + i)->val));
                 [map setObject:value forKey:key];
             }
